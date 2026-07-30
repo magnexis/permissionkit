@@ -19,4 +19,4 @@ jobs:
       - name: Test
         run: swift test
       - name: Build DocC
-        run: swift package generate-documentation --target PermissionKit
+        run: swift package --allow-writing-to-package-directory generate-documentation --target PermissionKit

@@ -8,6 +8,9 @@ let package = Package(
         .library(name: "PermissionKit", targets: ["PermissionKit"]),
         .library(name: "PermissionKitUI", targets: ["PermissionKitUI"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.5.0")
+    ],
     targets: [
         .target(name: "PermissionKit"),
         .target(name: "PermissionKitUI", dependencies: ["PermissionKit"]),
