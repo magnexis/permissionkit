@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show toolchain
+        run: swift --version
+      - name: Validate package manifest
+        run: swift package dump-package
+      - name: Build all products
+        run: swift build
+      - name: Test
+        run: swift test
+      - name: Build DocC
+        run: swift package generate-documentation --target PermissionKit

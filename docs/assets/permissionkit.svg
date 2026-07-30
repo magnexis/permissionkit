@@ -1,0 +1,5 @@
+<svg width="720" height="180" viewBox="0 0 720 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">PermissionKit</title><desc id="description">A blue shield with a checkmark beside the PermissionKit wordmark.</desc>
+  <path d="M90 16L146 37V82C146 119 122 145 90 160C58 145 34 119 34 82V37L90 16Z" fill="#2563EB"/><path d="M62 85L81 104L119 65" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="180" y="102" fill="#0F172A" font-family="Arial, sans-serif" font-size="62" font-weight="700">PermissionKit</text><text x="183" y="134" fill="#475569" font-family="Arial, sans-serif" font-size="20">Clear, respectful Apple permission handling</text>
+</svg>
