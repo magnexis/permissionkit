@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — Unreleased
+## 0.2.0 — 2026-07-30
 
 - Added delegate-backed location authorization requests.
 - Preserved configured photo access levels and notification options in native requests.

@@ -24,7 +24,7 @@ PermissionKit is a privacy-conscious, dependency-free Swift Package for checking
 Add the package in Xcode using **File → Add Package Dependencies**, or add it to `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/magnexis/permission-kit.git", from: "0.1.0")
+.package(url: "https://github.com/magnexis/permissionkit.git", from: "0.2.0")
 ```
 
 Import `PermissionKitUI` only when using the optional SwiftUI components.
