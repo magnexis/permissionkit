@@ -89,7 +89,7 @@ enum NativePermissions {
         #endif
     }
     static func mediaLibraryStatus() async -> PermissionStatus {
-        #if canImport(MediaPlayer)
+        #if os(iOS) && canImport(MediaPlayer)
         return mapMediaLibrary(MPMediaLibrary.authorizationStatus())
         #else
         return .unsupported
@@ -97,7 +97,7 @@ enum NativePermissions {
     }
     static func requestMediaLibrary() async -> PermissionResult {
         let before = await mediaLibraryStatus()
-        #if canImport(MediaPlayer)
+        #if os(iOS) && canImport(MediaPlayer)
         guard before == .notDetermined else { return PermissionResult(permission: .mediaLibrary, previousStatus: before, currentStatus: before, didPresentSystemPrompt: false) }
         let status = await withCheckedContinuation { continuation in MPMediaLibrary.requestAuthorization { continuation.resume(returning: $0) } }
         return PermissionResult(permission: .mediaLibrary, previousStatus: before, currentStatus: mapMediaLibrary(status), didPresentSystemPrompt: true)
@@ -126,7 +126,11 @@ enum NativePermissions {
     }
     static func locationStatus() async -> PermissionStatus {
         #if canImport(CoreLocation)
+        #if os(macOS)
+        return mapLocation(CLLocationManager().authorizationStatus)
+        #else
         return mapLocation(CLLocationManager.authorizationStatus())
+        #endif
         #else
         return .unsupported
         #endif
@@ -183,7 +187,7 @@ private func mapSpeech(_ value: SFSpeechRecognizerAuthorizationStatus) -> Permis
 import AppTrackingTransparency
 @available(iOS 14, *) private func mapTracking(_ value: ATTrackingManager.AuthorizationStatus) -> PermissionStatus { switch value { case .notDetermined: .notDetermined; case .authorized: .authorized; case .denied: .denied; case .restricted: .restricted; @unknown default: .unknown } }
 #endif
-#if canImport(MediaPlayer)
+#if os(iOS) && canImport(MediaPlayer)
 import MediaPlayer
 private func mapMediaLibrary(_ value: MPMediaLibraryAuthorizationStatus) -> PermissionStatus { switch value { case .notDetermined: .notDetermined; case .authorized: .authorized; case .denied: .denied; case .restricted: .restricted; @unknown default: .unknown } }
 #endif
