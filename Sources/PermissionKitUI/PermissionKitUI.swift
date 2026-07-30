@@ -4,9 +4,9 @@ import PermissionKit
 
 private struct PermissionEnvironmentKey: EnvironmentKey { static let defaultValue = PermissionEnvironment.live }
 public extension EnvironmentValues { var permissionEnvironment: PermissionEnvironment { get { self[PermissionEnvironmentKey.self] } set { self[PermissionEnvironmentKey.self] = newValue } } }
-public extension View { func permissionEnvironment(_ environment: PermissionEnvironment) -> some View { environment(\.permissionEnvironment, environment) } }
+public extension View { func permissionEnvironment(_ permissionEnvironment: PermissionEnvironment) -> some View { self.environment(\.permissionEnvironment, permissionEnvironment) } }
 
-@MainActor @propertyWrapper public struct PermissionState: DynamicProperty {
+@MainActor @propertyWrapper public struct PermissionState: @preconcurrency DynamicProperty {
     @State private var value: PermissionKit.PermissionState
     private let permission: AnyPermission
     public init(wrappedValue: PermissionKit.PermissionState? = nil, _ permission: AnyPermission) { self.permission = permission; _value = State(initialValue: wrappedValue ?? PermissionKit.PermissionState(permission: permission.id, status: .notDetermined)) }
