@@ -38,7 +38,7 @@ struct BuiltInPermission: PermissionType {
 
 extension BuiltInPermission {
     static var camera: Self { make(.camera, "Camera", "Capture photos and video.", ["NSCameraUsageDescription"], platforms: [.iOS, .macOS, .visionOS], read: NativePermissions.cameraStatus, request: NativePermissions.requestCamera) }
-    static var microphone: Self { make(.microphone, "Microphone", "Record audio.", ["NSMicrophoneUsageDescription"], platforms: [.iOS, .macOS, .watchOS, .tvOS, .visionOS], read: NativePermissions.microphoneStatus, request: NativePermissions.requestMicrophone) }
+    static var microphone: Self { make(.microphone, "Microphone", "Record audio.", ["NSMicrophoneUsageDescription"], platforms: [.iOS, .macOS, .watchOS, .visionOS], read: NativePermissions.microphoneStatus, request: NativePermissions.requestMicrophone) }
     static var contacts: Self { make(.contacts, "Contacts", "Access contacts selected by the user.", ["NSContactsUsageDescription"], platforms: [.iOS, .macOS, .watchOS, .visionOS], read: NativePermissions.contactsStatus, request: NativePermissions.requestContacts) }
     static var speechRecognition: Self { make(.speechRecognition, "Speech Recognition", "Convert speech into text on your behalf.", ["NSSpeechRecognitionUsageDescription"], platforms: [.iOS, .macOS, .watchOS, .visionOS], read: NativePermissions.speechStatus, request: NativePermissions.requestSpeech) }
     static var tracking: Self { make(.tracking, "Tracking", "Allow app and website tracking when you choose.", ["NSUserTrackingUsageDescription"], platforms: [.iOS], read: NativePermissions.trackingStatus, request: NativePermissions.requestTracking) }

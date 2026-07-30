@@ -10,8 +10,10 @@ enum NativePermissions {
         #endif
     }
     static func microphoneStatus() async -> PermissionStatus {
-        #if canImport(AVFoundation)
-        return mapAVAudio(AVFoundation.AVAudioSession.sharedInstance().recordPermission)
+        #if os(macOS) && canImport(AVFoundation)
+        return mapAVCapture(AVCaptureDevice.authorizationStatus(for: .audio))
+        #elseif (os(iOS) || os(watchOS) || os(visionOS)) && canImport(AVFoundation)
+        return mapAVAudio(AVAudioSession.sharedInstance().recordPermission)
         #else
         return .unsupported
         #endif
@@ -28,7 +30,11 @@ enum NativePermissions {
     }
     static func requestMicrophone() async -> PermissionResult {
         let before = await microphoneStatus()
-        #if canImport(AVFoundation)
+        #if os(macOS) && canImport(AVFoundation)
+        guard before == .notDetermined else { return PermissionResult(permission: .microphone, previousStatus: before, currentStatus: before, didPresentSystemPrompt: false) }
+        let granted = await withCheckedContinuation { continuation in AVCaptureDevice.requestAccess(for: .audio) { continuation.resume(returning: $0) } }
+        return PermissionResult(permission: .microphone, previousStatus: before, currentStatus: granted ? .authorized : .denied, didPresentSystemPrompt: true)
+        #elseif (os(iOS) || os(watchOS) || os(visionOS)) && canImport(AVFoundation)
         guard before == .notDetermined else { return PermissionResult(permission: .microphone, previousStatus: before, currentStatus: before, didPresentSystemPrompt: false) }
         let granted = await withCheckedContinuation { continuation in AVAudioSession.sharedInstance().requestRecordPermission { continuation.resume(returning: $0) } }
         return PermissionResult(permission: .microphone, previousStatus: before, currentStatus: granted ? .authorized : .denied, didPresentSystemPrompt: true)
@@ -173,7 +179,10 @@ enum NativePermissions {
 #if canImport(AVFoundation)
 import AVFoundation
 private func importAVCameraStatus() -> PermissionStatus { switch AVCaptureDevice.authorizationStatus(for: .video) { case .notDetermined: .notDetermined; case .authorized: .authorized; case .denied: .denied; case .restricted: .restricted; @unknown default: .unknown } }
+private func mapAVCapture(_ value: AVAuthorizationStatus) -> PermissionStatus { switch value { case .notDetermined: .notDetermined; case .authorized: .authorized; case .denied: .denied; case .restricted: .restricted; @unknown default: .unknown } }
+#if os(iOS) || os(watchOS) || os(visionOS)
 private func mapAVAudio(_ value: AVAudioSession.RecordPermission) -> PermissionStatus { switch value { case .undetermined: .notDetermined; case .granted: .authorized; case .denied: .denied; @unknown default: .unknown } }
+#endif
 #endif
 #if canImport(Contacts)
 import Contacts
@@ -198,7 +207,7 @@ private func mapPhotos(_ value: PHAuthorizationStatus) -> PermissionStatus { swi
 #if canImport(CoreLocation)
 import CoreLocation
 private func mapLocation(_ value: CLAuthorizationStatus) -> PermissionStatus { switch value { case .notDetermined: .notDetermined; case .authorizedAlways, .authorizedWhenInUse: .authorized; case .denied: .denied; case .restricted: .restricted; @unknown default: .unknown } }
-@MainActor private final class LocationAuthorizationRequester: NSObject, CLLocationManagerDelegate {
+@MainActor private final class LocationAuthorizationRequester: NSObject, @preconcurrency CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     private var continuation: CheckedContinuation<PermissionStatus, Never>?
     static func request(level: LocationAuthorizationLevel) async -> PermissionStatus { await LocationAuthorizationRequester().request(level: level) }
