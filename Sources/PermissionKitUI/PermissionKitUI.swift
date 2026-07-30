@@ -12,7 +12,11 @@ public extension View { func permissionEnvironment(_ permissionEnvironment: Perm
     public init(wrappedValue: PermissionKit.PermissionState? = nil, _ permission: AnyPermission) { self.permission = permission; _value = State(initialValue: wrappedValue ?? PermissionKit.PermissionState(permission: permission.id, status: .notDetermined)) }
     public var wrappedValue: PermissionKit.PermissionState { value }
     public var projectedValue: Self { self }
-    public mutating func update() { Task { value = await permission.state() } }
+    public mutating func update() {
+        let permission = permission
+        let binding = $value
+        Task { @MainActor in binding.wrappedValue = await permission.state() }
+    }
     public func request() async { value = await permission.state(); _ = await permission.request(); value = await permission.state() }
 }
 
